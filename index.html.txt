@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CV - Luciana Revollar</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Luciana Revollar</h1>
+    <p>Licenciatura en Gestión Ambiental, con formación en Administración de empresas y amor por la tecnología</p>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" data-section="perfil">Perfil</button>
+    <button class="nav-btn" data-section="experiencia">Experiencia</button>
+    <button class="nav-btn" data-section="educacion">Educación</button>
+    <button class="nav-btn" data-section="habilidades">Habilidades</button>
+    <button class="nav-btn" data-section="contacto">Contacto</button>
+  </nav>
+
+  <main>
+    <section id="perfil" class="section active">
+      <h2>Perfil Profesional</h2>
+      <p>Profesional administrativa con experiencia en gestión contable, soporte legal, facturación, tesorería y control presupuestario. Orientada a resultados, organizada, capaz de liderar procesos y automatizar tareas para mejorar la eficiencia operativa, con adaptabilidad y trabajo en equipo interdisciplinario.</p>
+    </section>
+
+    <section id="experiencia" class="section">
+      <h2>Experiencia Laboral</h2>
+      <div class="card">
+        <h3>Business Manager - Fabricarg SRL, Córdoba Capital</h3>
+        <span>Junio 2024 - Octubre 2024</span>
+        <p>Gestión de pagos a colaboradores internos y externos, conciliaciones y registraciones. Preparación de presupuestos, seguimiento de gastos y control de caja. Asistencia a Gerencia y RRHH, coordinación de agenda y comunicación interna. Elaboración de reportes en Microsoft Excel para toma de decisiones. Participación en iniciativas de mejora continua y certificaciones ISO. Revisión de contratos.</p>
+      </div>
+      <div class="card">
+        <h3>Administrativa de Ventas - Florensa SA, Córdoba Capital</h3>
+        <span>Junio 2023 - Abril 2024</span>
+        <p>Facturación y seguimiento de pedidos en Flexxus. Apoyo a Cuentas por cobrar, Administración y Tesorería. Atención a clientes, resolución de reclamos y soporte postventa. Automatización de reportes en Excel, optimizando tiempos de respuesta. Participación en iniciativas de mejora continua y certificaciones ISO.</p>
+      </div>
+      <div class="card">
+        <h3>Administrativa Legal - Embotelladora del Atlántico S.A. (Coca Cola Andina), Córdoba Capital</h3>
+        <span>Octubre 2016 - Noviembre 2022</span>
+        <p>Revisión de contratos comerciales, de locación, de transporte, de servicios varios. Revisión de poderes y documentación societaria. Coordinación con estudios jurídicos y contables externos, pagos a proveedores internos y externos, gestión de presupuestos, pedidos y registración en SAP. Implementación de procesos de automatización y digitalización documental, logrando despapelizar el área Legal y Finanzas.</p>
+      </div>
+    </section>
+
+    <section id="educacion" class="section">
+      <h2>Educación</h2>
+      <div class="card">
+        <h3>Licenciatura en Gestión Ambiental</h3>
+        <span>Universidad Empresarial Siglo 21, 2021 - Actualidad</span>
+      </div>
+      <div class="card">
+        <h3>Curso de Blockchain</h3>
+        <span>Universidad Blas Pascal, 2025</span>
+      </div>
+      <div class="card">
+        <h3>Curso en Ciberseguridad</h3>
+        <span>Universidad Empresarial Siglo 21, 2020</span>
+      </div>
+      <div class="card">
+        <h3>Curso Excel Avanzado</h3>
+        <span>Universidad Nacional de Córdoba, 2019</span>
+      </div>
+      <div class="card">
+        <h3>Abogacía (sin finalizar)</h3>
+        <span>Universidad Nacional de Córdoba, 2013 - 2017</span>
+      </div>
+      <div class="card">
+        <h3>Inglés</h3>
+        <span>Magic School Of English, 2007 - 2011</span>
+      </div>
+    </section>
+
+    <section id="habilidades" class="section">
+      <h2>Habilidades</h2>
+      <ul>
+        <li><strong>ERP:</strong> SAP, Flexxus</li>
+        <li><strong>Ofimática:</strong> Microsoft Office 365 (Excel, Power Point, Word, etc), Google Workspace (Docs, Sheets, Drive, Meet, etc)</li>
+        <li><strong>Plataformas:</strong> Trello, Canva, Lex Doctor, Lotus Notes, Webdox, Asana</li>
+        <li><strong>Idiomas:</strong> Inglés escrito avanzado (C1), oral intermedio (B2)</li>
+      </ul>
+    </section>
+
+    <section id="contacto" class="section">
+      <h2>Contacto</h2>
+      <p>Email: <a href="mailto:lucianarevollar@gmail.com">lucianarevollar@gmail.com</a></p>
+      <p>Teléfono: +54 9 351 7616496</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/lurevollar/" target="_blank" rel="noopener">linkedin.com/in/lurevollar/</a></p>
+      <p>GitHub: <a href="https://github.com/lucianarevollar-libelula" target="_blank" rel="noopener">github.com/lucianarevollar-libelula</a></p>
+    </section>
+  </main>
+
+  <footer>
+    © 2024 Luciana Revollar. Todos los derechos reservados.
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
