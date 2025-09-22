@@ -6,7 +6,12 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: lilita-one-regular {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
   background: #f0f4f8;
   color: #333;
   max-width: 900px;
@@ -125,3 +130,4 @@ footer {
   color: #777;
   padding-bottom: 1rem;
 }
+
