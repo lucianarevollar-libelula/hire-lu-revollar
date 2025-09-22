@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: "Lilita One", sans-serif;
+  font-family: 'Lato', Tahoma, Geneva, Verdana, sans-serif;
   background: #f0f4f8;
   color: #333;
   max-width: 900px;
@@ -132,6 +132,7 @@ footer {
   color: #777;
   padding-bottom: 1rem;
 }
+
 
 
 
