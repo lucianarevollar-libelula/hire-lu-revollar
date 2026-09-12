@@ -1,15 +1,33 @@
-// Maneja la navegación entre secciones
-document.querySelectorAll('.nav-btn').forEach(button => {
-  button.addEventListener('click', () => {
-    // Quitar clase active de todos los botones
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    // Poner active al botón clickeado
-    button.classList.add('active');
+/*
+  Funcionalidad del portfolio:
+  - Controla la apertura y cierre del menú de navegación en dispositivos móviles.
+  - Cierra el menú al seleccionar una sección.
+  - Actualiza automáticamente el año mostrado en el footer.
+*/
+// Elementos necesarios para controlar el menú móvil
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.site-nav');
+const navLinks = document.querySelectorAll('.site-nav a');
 
-    // Ocultar todas las secciones
-    document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
-    // Mostrar la sección correspondiente
-    const sectionId = button.getAttribute('data-section');
-    document.getElementById(sectionId).classList.add('active');
+// Abre y cierra el menú hamburguesa en pantallas pequeñas
+if (menuToggle && nav) {
+  menuToggle.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
   });
-});
+
+  // Cierra el menú después de seleccionar una sección
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
+// Actualiza automáticamente el año del footer
+const year = document.getElementById('year');
+
+if (year) {
+  year.textContent = new Date().getFullYear();
+}
