@@ -5,10 +5,7 @@
   los guardamos como variables. Así, si queremos cambiar
   el color principal del sitio, podemos hacerlo una sola vez.
 */
-:root {
-  --bg: #f7f7f2;
-  --text: #1f2923;
-  --accent: #2f5d50;
+
 :root {
   --bg: #f7f7f2;
   --surface: #ffffff;
