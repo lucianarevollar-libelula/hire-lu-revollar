@@ -18,11 +18,12 @@
   --max: 1000px;
 }
 /* MODO OSCURO
-   Cuando JavaScript agrega data-theme="dark" al documento,
+
+   Cuando JavaScript agrega la clase "dark-mode" al body,
    estas variables reemplazan a las del modo claro.
 */
 
-[data-theme="dark"] {
+body.dark-mode {
   --bg: #151a17;
   --surface: #1d2420;
   --surface-soft: #202923;
