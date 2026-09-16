@@ -58,3 +58,4 @@ if (themeToggle) {
     themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
   });
 }
+console.log("MODO OSCURO CARGADO");
