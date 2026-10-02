@@ -41,50 +41,40 @@ const soundBtn = document.getElementById("soundBtn");
 
 soundBtn.addEventListener("click", () => {
 
-  const AudioContext =
-    window.AudioContext || window.webkitAudioContext;
-
   const audioCtx = new AudioContext();
 
-  function playNote(frequency, startTime, duration) {
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-    const oscillator = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+  osc1.type = "sine";
+  osc2.type = "sine";
 
-    oscillator.type = "sine";
-    oscillator.frequency.value = frequency;
+  osc1.frequency.value = 523.25;
+  osc2.frequency.value = 1046.5;
 
-    const start = audioCtx.currentTime + startTime;
-    const end = start + duration;
+  const now = audioCtx.currentTime;
 
-    // nace en silencio
-    gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.setValueAtTime(0.0001, now);
 
-    // aparece suavemente
-    gain.gain.exponentialRampToValueAtTime(
-      0.08,
-      start + 0.15
-    );
+  gain.gain.exponentialRampToValueAtTime(
+    0.08,
+    now + 0.01
+  );
 
-    // desaparece
-    gain.gain.exponentialRampToValueAtTime(
-      0.0001,
-      end
-    );
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    now + 2.5
+  );
 
-    oscillator.connect(gain);
-    gain.connect(audioCtx.destination);
+  osc1.connect(gain);
+  osc2.connect(gain);
+  gain.connect(audioCtx.destination);
 
-    oscillator.start(start);
-    oscillator.stop(end);
-  }
+  osc1.start(now);
+  osc2.start(now);
 
-  // Mini secuencia
-  playNote(261.63, 0.0, 1.2);  // Do
-  playNote(329.63, 0.6, 1.2);  // Mi
-  playNote(392.00, 1.2, 1.4);  // Sol
-  playNote(329.63, 2.0, 1.4);  // Mi
-  playNote(293.66, 2.8, 1.6);  // Re
-  playNote(261.63, 3.6, 2.0);  // Do
+  osc1.stop(now + 2.5);
+  osc2.stop(now + 2.5);
 
 });
