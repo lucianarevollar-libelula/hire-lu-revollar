@@ -40,33 +40,22 @@ themeToggle.addEventListener('click', () => {
 const soundBtn = document.getElementById("soundBtn");
 
 soundBtn.addEventListener("click", () => {
+  console.log("EL BOTÓN FUNCIONA 🎹");
 
-  // Creamos el "motor" de audio
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioContext();
 
-  // Creamos un oscilador: esto GENERA el sonido
   const oscillator = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
-  // Controlamos el volumen
-  const volume = audioCtx.createGain();
-
-  // Tipo de onda
   oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
 
-  // 440 Hz = nota LA
-  oscillator.frequency.value = 440;
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
 
-  // Volumen bajo
-  volume.gain.value = 0.08;
+  oscillator.connect(gain);
+  gain.connect(audioCtx.destination);
 
-  // Oscilador → volumen → parlantes
-  oscillator.connect(volume);
-  volume.connect(audioCtx.destination);
-
-  // Empezar AHORA
   oscillator.start();
-
-  // Detener después de 1 segundo
-  oscillator.stop(audioCtx.currentTime + 1);
-
+  oscillator.stop(audioCtx.currentTime + 2);
 });
