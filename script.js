@@ -99,7 +99,7 @@ soundBtn.addEventListener("click", async () => {
     // Volumen de la lluvia de fondo
     rainGain = audioCtx.createGain();
 
-    rainGain.gain.value = 0.035;
+    rainGain.gain.value = 0.09;
 
 
     // Conectamos la lluvia
@@ -151,7 +151,7 @@ soundBtn.addEventListener("click", async () => {
       );
 
       gain.gain.exponentialRampToValueAtTime(
-        0.08,
+        0.04,
         now + 0.005
       );
 
