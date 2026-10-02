@@ -46,42 +46,47 @@ soundBtn.addEventListener("click", () => {
 
   const audioCtx = new AudioContext();
 
-  // Generador de la onda
-  const oscillator = audioCtx.createOscillator();
+  // DO - MI - SOL
+  const frequencies = [
+    261.63,
+    329.63,
+    392.00
+  ];
 
-  // Control de amplitud
-  const gain = audioCtx.createGain();
+  frequencies.forEach(frequency => {
 
-  oscillator.type = "sine";
+    const oscillator = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
 
-  // Do4 = 261.63 Hz
-  oscillator.frequency.value = 261.63;
+    // Probemos triangle en vez de sine
+    oscillator.type = "triangle";
 
-  // Empieza prácticamente en silencio
-  gain.gain.setValueAtTime(
-    0.0001,
-    audioCtx.currentTime
-  );
+    oscillator.frequency.value = frequency;
 
-  // FADE IN exponencial
-  gain.gain.exponentialRampToValueAtTime(
-    0.15,
-    audioCtx.currentTime + 0.8
-  );
+    // Empieza casi en silencio
+    gain.gain.setValueAtTime(
+      0.0001,
+      audioCtx.currentTime
+    );
 
-  // FADE OUT exponencial
-  gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    audioCtx.currentTime + 3
-  );
+    // Sube suavemente
+    gain.gain.exponentialRampToValueAtTime(
+      0.04,
+      audioCtx.currentTime + 0.5
+    );
 
-  oscillator.connect(gain);
-  gain.connect(audioCtx.destination);
+    // Baja lentamente
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioCtx.currentTime + 3
+    );
 
-  oscillator.start();
+    oscillator.connect(gain);
+    gain.connect(audioCtx.destination);
 
-  oscillator.stop(
-    audioCtx.currentTime + 3
-  );
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 3);
+
+  });
 
 });
