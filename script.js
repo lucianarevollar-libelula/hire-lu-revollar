@@ -46,47 +46,45 @@ soundBtn.addEventListener("click", () => {
 
   const audioCtx = new AudioContext();
 
-  // DO - MI - SOL
-  const frequencies = [
-    261.63,
-    329.63,
-    392.00
-  ];
-
-  frequencies.forEach(frequency => {
+  function playNote(frequency, startTime, duration) {
 
     const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    // Probemos triangle en vez de sine
-    oscillator.type = "triangle";
-
+    oscillator.type = "sine";
     oscillator.frequency.value = frequency;
 
-    // Empieza casi en silencio
-    gain.gain.setValueAtTime(
-      0.0001,
-      audioCtx.currentTime
+    const start = audioCtx.currentTime + startTime;
+    const end = start + duration;
+
+    // nace en silencio
+    gain.gain.setValueAtTime(0.0001, start);
+
+    // aparece suavemente
+    gain.gain.exponentialRampToValueAtTime(
+      0.08,
+      start + 0.15
     );
 
-    // Sube suavemente
-    gain.gain.exponentialRampToValueAtTime(
-      0.04,
-      audioCtx.currentTime + 0.5
-    );
-
-    // Baja lentamente
+    // desaparece
     gain.gain.exponentialRampToValueAtTime(
       0.0001,
-      audioCtx.currentTime + 3
+      end
     );
 
     oscillator.connect(gain);
     gain.connect(audioCtx.destination);
 
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 3);
+    oscillator.start(start);
+    oscillator.stop(end);
+  }
 
-  });
+  // Mini secuencia
+  playNote(261.63, 0.0, 1.2);  // Do
+  playNote(329.63, 0.6, 1.2);  // Mi
+  playNote(392.00, 1.2, 1.4);  // Sol
+  playNote(329.63, 2.0, 1.4);  // Mi
+  playNote(293.66, 2.8, 1.6);  // Re
+  playNote(261.63, 3.6, 2.0);  // Do
 
 });
