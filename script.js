@@ -42,13 +42,17 @@ const soundBtn = document.getElementById("soundBtn");
 let audioCtx;
 let rainSource;
 let rainGain;
+let dropTimer;
 
 let rainPlaying = false;
 
 soundBtn.addEventListener("click", async () => {
 
-  // Si la lluvia está apagada → la encendemos
   if (!rainPlaying) {
+
+    // =========================
+    // 1. ENCENDEMOS LA LLUVIA
+    // =========================
 
     const AudioContext =
       window.AudioContext || window.webkitAudioContext;
@@ -57,7 +61,10 @@ soundBtn.addEventListener("click", async () => {
 
     await audioCtx.resume();
 
-    // Creamos 3 segundos de ruido
+    // -------------------------
+    // LLUVIA DE FONDO
+    // -------------------------
+
     const duration = 3;
 
     const buffer = audioCtx.createBuffer(
@@ -68,52 +75,113 @@ soundBtn.addEventListener("click", async () => {
 
     const data = buffer.getChannelData(0);
 
-    // Ruido blanco
     for (let i = 0; i < data.length; i++) {
       data[i] = Math.random() * 2 - 1;
     }
 
     rainSource = audioCtx.createBufferSource();
     rainSource.buffer = buffer;
-
-    // ESTA es la parte que permite repetirlo
     rainSource.loop = true;
 
-    // Filtro
-    const filter = audioCtx.createBiquadFilter();
+    const rainFilter = audioCtx.createBiquadFilter();
 
-    filter.type = "lowpass";
-    filter.frequency.value = 3000;
+    rainFilter.type = "lowpass";
+    rainFilter.frequency.value = 1800;
 
-    // Volumen
     rainGain = audioCtx.createGain();
 
-    rainGain.gain.value = 0.12;
+    // Bajamos bastante la estática
+    rainGain.gain.value = 0.035;
 
-    // Conexiones
-    rainSource.connect(filter);
-    filter.connect(rainGain);
+    rainSource.connect(rainFilter);
+    rainFilter.connect(rainGain);
     rainGain.connect(audioCtx.destination);
 
     rainSource.start();
 
+
+    // =========================
+    // 2. CREAMOS UNA GOTA
+    // =========================
+
+    function createDrop() {
+
+      if (!rainPlaying) return;
+
+      const oscillator = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      // Cada gota tendrá una frecuencia diferente
+      const frequency =
+        500 + Math.random() * 1800;
+
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+
+      const now = audioCtx.currentTime;
+
+      // Empieza rápidamente
+      gain.gain.setValueAtTime(
+        0.0001,
+        now
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.025,
+        now + 0.005
+      );
+
+      // Y desaparece rápidamente
+      gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        now + 0.12
+      );
+
+      oscillator.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      oscillator.start(now);
+      oscillator.stop(now + 0.13);
+
+
+      // =========================
+      // 3. DECIDIMOS CUÁNDO
+      //    CAE LA PRÓXIMA GOTA
+      // =========================
+
+      const nextDrop =
+        80 + Math.random() * 350;
+
+      dropTimer = setTimeout(
+        createDrop,
+        nextDrop
+      );
+    }
+
+
     rainPlaying = true;
 
-    soundBtn.textContent = "⏹ Detener lluvia";
+    createDrop();
 
-  }
+    soundBtn.textContent =
+      "⏹ Detener lluvia";
 
-  // Si ya está sonando → la detenemos
-  else {
+  } else {
+
+    // =========================
+    // 4. APAGAMOS TODO
+    // =========================
+
+    rainPlaying = false;
+
+    clearTimeout(dropTimer);
 
     rainSource.stop();
 
     await audioCtx.close();
 
-    rainPlaying = false;
-
-    soundBtn.textContent = "🌧 Lluvia";
-
+    soundBtn.textContent =
+      "🌧 Lluvia";
   }
 
 });
