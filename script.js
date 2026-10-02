@@ -46,39 +46,49 @@ soundBtn.addEventListener("click", async () => {
 
   const audioCtx = new AudioContext();
 
-  // Aseguramos que Chrome active el audio
   await audioCtx.resume();
 
-  const oscillator = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
+  function playNote(frequency, startTime) {
 
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(
-    523.25,
-    audioCtx.currentTime
-  );
+    const oscillator = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
 
-  // Empieza con volumen
-  gain.gain.setValueAtTime(
-    0.15,
-    audioCtx.currentTime
-  );
+    oscillator.type = "sine";
 
-  // Se desvanece suavemente
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    audioCtx.currentTime + 2
-  );
+    const start = audioCtx.currentTime + startTime;
 
-  oscillator.connect(gain);
-  gain.connect(audioCtx.destination);
+    oscillator.frequency.setValueAtTime(
+      frequency,
+      start
+    );
 
-  oscillator.start();
+    gain.gain.setValueAtTime(
+      0.12,
+      start
+    );
 
-  oscillator.stop(
-    audioCtx.currentTime + 2
-  );
+    gain.gain.exponentialRampToValueAtTime(
+      0.001,
+      start + 1.5
+    );
 
-  console.log("TIN 🎵");
+    oscillator.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    oscillator.start(start);
+    oscillator.stop(start + 1.5);
+  }
+
+  // Nuestra primera mini melodía 🎹
+
+  playNote(261.63, 0);     // Do
+  playNote(329.63, 0.6);   // Mi
+  playNote(392.00, 1.2);   // Sol
+  playNote(493.88, 1.8);   // Si
+
+  playNote(392.00, 2.6);   // Sol
+  playNote(329.63, 3.2);   // Mi
+  playNote(293.66, 3.8);   // Re
+  playNote(261.63, 4.4);   // Do
 
 });
