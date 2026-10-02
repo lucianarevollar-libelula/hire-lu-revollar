@@ -48,11 +48,11 @@ let rainPlaying = false;
 
 soundBtn.addEventListener("click", async () => {
 
-  if (!rainPlaying) {
+  // =========================
+  // ENCENDER LLUVIA
+  // =========================
 
-    // =========================
-    // 1. ENCENDEMOS LA LLUVIA
-    // =========================
+  if (!rainPlaying) {
 
     const AudioContext =
       window.AudioContext || window.webkitAudioContext;
@@ -61,9 +61,12 @@ soundBtn.addEventListener("click", async () => {
 
     await audioCtx.resume();
 
-    // -------------------------
-    // LLUVIA DE FONDO
-    // -------------------------
+    rainPlaying = true;
+
+
+    // =========================
+    // 1. LLUVIA DE FONDO
+    // =========================
 
     const duration = 3;
 
@@ -75,24 +78,31 @@ soundBtn.addEventListener("click", async () => {
 
     const data = buffer.getChannelData(0);
 
+    // Generamos el ruido base
     for (let i = 0; i < data.length; i++) {
       data[i] = Math.random() * 2 - 1;
     }
 
     rainSource = audioCtx.createBufferSource();
+
     rainSource.buffer = buffer;
     rainSource.loop = true;
 
+
+    // Suavizamos el ruido
     const rainFilter = audioCtx.createBiquadFilter();
 
     rainFilter.type = "lowpass";
     rainFilter.frequency.value = 1800;
 
+
+    // Volumen de la lluvia de fondo
     rainGain = audioCtx.createGain();
 
-    // Bajamos bastante la estática
-    rainGain.gain.value = 0;
+    rainGain.gain.value = 0.035;
 
+
+    // Conectamos la lluvia
     rainSource.connect(rainFilter);
     rainFilter.connect(rainGain);
     rainGain.connect(audioCtx.destination);
@@ -101,7 +111,7 @@ soundBtn.addEventListener("click", async () => {
 
 
     // =========================
-    // 2. CREAMOS UNA GOTA
+    // 2. GOTAS INDIVIDUALES
     // =========================
 
     function createDrop() {
@@ -110,43 +120,62 @@ soundBtn.addEventListener("click", async () => {
 
       const oscillator = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
+      const panner = audioCtx.createStereoPanner();
 
-      // Cada gota tendrá una frecuencia diferente
+
+      // Frecuencia aleatoria:
+      // algunas gotas más graves,
+      // otras más agudas
       const frequency =
         500 + Math.random() * 1800;
 
       oscillator.type = "sine";
       oscillator.frequency.value = frequency;
 
+
+      // Posición aleatoria:
+      // -1 izquierda
+      //  0 centro
+      // +1 derecha
+      panner.pan.value =
+        Math.random() * 2 - 1;
+
+
       const now = audioCtx.currentTime;
 
-      // Empieza rápidamente
+
+      // La gota aparece rápido
       gain.gain.setValueAtTime(
         0.0001,
         now
       );
 
-     gain.gain.exponentialRampToValueAtTime(
-  0.08,
-  now + 0.005
-);
+      gain.gain.exponentialRampToValueAtTime(
+        0.08,
+        now + 0.005
+      );
 
-      // Y desaparece rápidamente
+
+      // Y desaparece rápido
       gain.gain.exponentialRampToValueAtTime(
         0.0001,
         now + 0.12
       );
 
+
+      // Conectamos:
+      // gota → volumen → posición → parlantes
       oscillator.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(panner);
+      panner.connect(audioCtx.destination);
+
 
       oscillator.start(now);
       oscillator.stop(now + 0.13);
 
 
       // =========================
-      // 3. DECIDIMOS CUÁNDO
-      //    CAE LA PRÓXIMA GOTA
+      // 3. PRÓXIMA GOTA
       // =========================
 
       const nextDrop =
@@ -159,18 +188,19 @@ soundBtn.addEventListener("click", async () => {
     }
 
 
-    rainPlaying = true;
-
+    // Arrancamos las gotas
     createDrop();
 
     soundBtn.textContent =
       "⏹ Detener lluvia";
+  }
 
-  } else {
 
-    // =========================
-    // 4. APAGAMOS TODO
-    // =========================
+  // =========================
+  // APAGAR LLUVIA
+  // =========================
+
+  else {
 
     rainPlaying = false;
 
@@ -182,6 +212,9 @@ soundBtn.addEventListener("click", async () => {
 
     soundBtn.textContent =
       "🌧 Lluvia";
+  }
+
+});
   }
 
 });
