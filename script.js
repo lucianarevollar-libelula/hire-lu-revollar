@@ -37,3 +37,36 @@ const themeToggle = document.getElementById('theme-toggle');
 themeToggle.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
 });
+const soundBtn = document.getElementById("soundBtn");
+
+soundBtn.addEventListener("click", () => {
+
+  // Creamos el "motor" de audio
+  const audioCtx = new AudioContext();
+
+  // Creamos un oscilador: esto GENERA el sonido
+  const oscillator = audioCtx.createOscillator();
+
+  // Controlamos el volumen
+  const volume = audioCtx.createGain();
+
+  // Tipo de onda
+  oscillator.type = "sine";
+
+  // 440 Hz = nota LA
+  oscillator.frequency.value = 440;
+
+  // Volumen bajo
+  volume.gain.value = 0.08;
+
+  // Oscilador → volumen → parlantes
+  oscillator.connect(volume);
+  volume.connect(audioCtx.destination);
+
+  // Empezar AHORA
+  oscillator.start();
+
+  // Detener después de 1 segundo
+  oscillator.stop(audioCtx.currentTime + 1);
+
+});
