@@ -53,7 +53,7 @@ soundBtn.addEventListener("click", async () => {
     const oscillator = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    oscillator.type = "sine";
+    oscillator.type = "triangle";
 
     const start = audioCtx.currentTime + startTime;
 
