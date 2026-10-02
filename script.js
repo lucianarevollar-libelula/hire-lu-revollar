@@ -39,151 +39,31 @@ themeToggle.addEventListener('click', () => {
 });
 const soundBtn = document.getElementById("soundBtn");
 
-let audioCtx;
-let rainTimer;
-let rainPlaying = false;
+const ambiente = new Audio("lluvia.wav");
+
+ambiente.loop = true;
+ambiente.volume = 0.18;
+
+let ambienteActivo = false;
 
 soundBtn.addEventListener("click", async () => {
 
-  // =========================
-  // ENCENDER LLUVIA
-  // =========================
+  if (!ambienteActivo) {
 
-  if (!rainPlaying) {
+    await ambiente.play();
 
-    const AudioContext =
-      window.AudioContext || window.webkitAudioContext;
+    ambienteActivo = true;
 
-    audioCtx = new AudioContext();
-    await audioCtx.resume();
+    soundBtn.textContent = "⏹ Detener ambiente";
 
-    rainPlaying = true;
+  } else {
 
-    // =========================
-    // CREAR UNA GOTA
-    // =========================
+    ambiente.pause();
 
-    function createDrop() {
+    ambienteActivo = false;
 
-      if (!rainPlaying) return;
+    soundBtn.textContent = "🌧 Ambiente";
 
-      // Creamos un fragmento MUY corto de ruido
-      const duration =
-        0.025 + Math.random() * 0.06;
-
-      const buffer = audioCtx.createBuffer(
-        1,
-        audioCtx.sampleRate * duration,
-        audioCtx.sampleRate
-      );
-
-      const data = buffer.getChannelData(0);
-
-      for (let i = 0; i < data.length; i++) {
-
-        // Ruido aleatorio
-        const noise =
-          Math.random() * 2 - 1;
-
-        // La gota pierde fuerza rápidamente
-        const envelope =
-          1 - i / data.length;
-
-        data[i] =
-          noise * envelope;
-      }
-
-
-      const drop =
-        audioCtx.createBufferSource();
-
-      drop.buffer = buffer;
-
-
-      // =========================
-      // FILTRO DE LA GOTA
-      // =========================
-
-      const filter =
-        audioCtx.createBiquadFilter();
-
-      filter.type = "bandpass";
-
-      filter.frequency.value =
-        900 + Math.random() * 2200;
-
-      filter.Q.value =
-        0.7 + Math.random() * 1.5;
-
-
-      // =========================
-      // VOLUMEN
-      // =========================
-
-      const gain =
-        audioCtx.createGain();
-
-      gain.gain.value =
-        0.015 + Math.random() * 0.035;
-
-
-      // =========================
-      // POSICIÓN
-      // =========================
-
-      const panner =
-        audioCtx.createStereoPanner();
-
-      panner.pan.value =
-        Math.random() * 2 - 1;
-
-
-      // =========================
-      // CONECTAMOS
-      // =========================
-
-      drop.connect(filter);
-      filter.connect(gain);
-      gain.connect(panner);
-      panner.connect(audioCtx.destination);
-
-      drop.start();
-
-
-      // =========================
-      // PRÓXIMA GOTA
-      // =========================
-
-      const nextDrop =
-        25 + Math.random() * 100;
-
-      rainTimer =
-        setTimeout(createDrop, nextDrop);
-    }
-
-
-    // Arranca la lluvia
-    createDrop();
-
-    soundBtn.textContent =
-      "⏹ Detener lluvia";
-  }
-
-
-  // =========================
-  // APAGAR LLUVIA
-  // =========================
-
-  else {
-
-    rainPlaying = false;
-
-    clearTimeout(rainTimer);
-
-    await audioCtx.close();
-
-    soundBtn.textContent =
-      "🌧 Lluvia";
   }
 
 });
