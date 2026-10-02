@@ -39,56 +39,81 @@ themeToggle.addEventListener('click', () => {
 });
 const soundBtn = document.getElementById("soundBtn");
 
+let audioCtx;
+let rainSource;
+let rainGain;
+
+let rainPlaying = false;
+
 soundBtn.addEventListener("click", async () => {
 
-  const AudioContext =
-    window.AudioContext || window.webkitAudioContext;
+  // Si la lluvia está apagada → la encendemos
+  if (!rainPlaying) {
 
-  const audioCtx = new AudioContext();
+    const AudioContext =
+      window.AudioContext || window.webkitAudioContext;
 
-  await audioCtx.resume();
+    audioCtx = new AudioContext();
 
-  function playNote(frequency, startTime) {
+    await audioCtx.resume();
 
-    const oscillator = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    // Creamos 3 segundos de ruido
+    const duration = 3;
 
-    oscillator.type = "triangle";
-
-    const start = audioCtx.currentTime + startTime;
-
-    oscillator.frequency.setValueAtTime(
-      frequency,
-      start
+    const buffer = audioCtx.createBuffer(
+      1,
+      audioCtx.sampleRate * duration,
+      audioCtx.sampleRate
     );
 
-    gain.gain.setValueAtTime(
-      0.12,
-      start
-    );
+    const data = buffer.getChannelData(0);
 
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      start + 1.5
-    );
+    // Ruido blanco
+    for (let i = 0; i < data.length; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
 
-    oscillator.connect(gain);
-    gain.connect(audioCtx.destination);
+    rainSource = audioCtx.createBufferSource();
+    rainSource.buffer = buffer;
 
-    oscillator.start(start);
-    oscillator.stop(start + 1.5);
+    // ESTA es la parte que permite repetirlo
+    rainSource.loop = true;
+
+    // Filtro
+    const filter = audioCtx.createBiquadFilter();
+
+    filter.type = "lowpass";
+    filter.frequency.value = 3000;
+
+    // Volumen
+    rainGain = audioCtx.createGain();
+
+    rainGain.gain.value = 0.12;
+
+    // Conexiones
+    rainSource.connect(filter);
+    filter.connect(rainGain);
+    rainGain.connect(audioCtx.destination);
+
+    rainSource.start();
+
+    rainPlaying = true;
+
+    soundBtn.textContent = "⏹ Detener lluvia";
+
   }
 
-  // Nuestra primera mini melodía 🎹
+  // Si ya está sonando → la detenemos
+  else {
 
-  playNote(261.63, 0);     // Do
-  playNote(329.63, 0.6);   // Mi
-  playNote(392.00, 1.2);   // Sol
-  playNote(493.88, 1.8);   // Si
+    rainSource.stop();
 
-  playNote(392.00, 2.6);   // Sol
-  playNote(329.63, 3.2);   // Mi
-  playNote(293.66, 3.8);   // Re
-  playNote(261.63, 4.4);   // Do
+    await audioCtx.close();
+
+    rainPlaying = false;
+
+    soundBtn.textContent = "🌧 Lluvia";
+
+  }
 
 });
