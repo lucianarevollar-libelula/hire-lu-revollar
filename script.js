@@ -40,10 +40,7 @@ themeToggle.addEventListener('click', () => {
 const soundBtn = document.getElementById("soundBtn");
 
 let audioCtx;
-let rainSource;
-let rainGain;
-let dropTimer;
-
+let rainTimer;
 let rainPlaying = false;
 
 soundBtn.addEventListener("click", async () => {
@@ -58,137 +55,114 @@ soundBtn.addEventListener("click", async () => {
       window.AudioContext || window.webkitAudioContext;
 
     audioCtx = new AudioContext();
-
     await audioCtx.resume();
 
     rainPlaying = true;
 
-
     // =========================
-    // 1. LLUVIA DE FONDO
-    // =========================
-
-    const duration = 3;
-
-    const buffer = audioCtx.createBuffer(
-      1,
-      audioCtx.sampleRate * duration,
-      audioCtx.sampleRate
-    );
-
-    const data = buffer.getChannelData(0);
-
-    // Generamos el ruido base
-    for (let i = 0; i < data.length; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    rainSource = audioCtx.createBufferSource();
-
-    rainSource.buffer = buffer;
-    rainSource.loop = true;
-
-
-    // Suavizamos el ruido
-    const rainFilter = audioCtx.createBiquadFilter();
-
-    rainFilter.type = "lowpass";
-    rainFilter.frequency.value = 1800;
-
-
-    // Volumen de la lluvia de fondo
-    rainGain = audioCtx.createGain();
-
-    rainGain.gain.value = 0.09;
-
-
-    // Conectamos la lluvia
-    rainSource.connect(rainFilter);
-    rainFilter.connect(rainGain);
-    rainGain.connect(audioCtx.destination);
-
-    rainSource.start();
-
-
-    // =========================
-    // 2. GOTAS INDIVIDUALES
+    // CREAR UNA GOTA
     // =========================
 
     function createDrop() {
 
       if (!rainPlaying) return;
 
-      const oscillator = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      const panner = audioCtx.createStereoPanner();
+      // Creamos un fragmento MUY corto de ruido
+      const duration =
+        0.025 + Math.random() * 0.06;
+
+      const buffer = audioCtx.createBuffer(
+        1,
+        audioCtx.sampleRate * duration,
+        audioCtx.sampleRate
+      );
+
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < data.length; i++) {
+
+        // Ruido aleatorio
+        const noise =
+          Math.random() * 2 - 1;
+
+        // La gota pierde fuerza rápidamente
+        const envelope =
+          1 - i / data.length;
+
+        data[i] =
+          noise * envelope;
+      }
 
 
-      // Frecuencia aleatoria:
-      // algunas gotas más graves,
-      // otras más agudas
-      const frequency =
-        500 + Math.random() * 1800;
+      const drop =
+        audioCtx.createBufferSource();
 
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
+      drop.buffer = buffer;
 
 
-      // Posición aleatoria:
-      // -1 izquierda
-      //  0 centro
-      // +1 derecha
+      // =========================
+      // FILTRO DE LA GOTA
+      // =========================
+
+      const filter =
+        audioCtx.createBiquadFilter();
+
+      filter.type = "bandpass";
+
+      filter.frequency.value =
+        900 + Math.random() * 2200;
+
+      filter.Q.value =
+        0.7 + Math.random() * 1.5;
+
+
+      // =========================
+      // VOLUMEN
+      // =========================
+
+      const gain =
+        audioCtx.createGain();
+
+      gain.gain.value =
+        0.015 + Math.random() * 0.035;
+
+
+      // =========================
+      // POSICIÓN
+      // =========================
+
+      const panner =
+        audioCtx.createStereoPanner();
+
       panner.pan.value =
         Math.random() * 2 - 1;
 
 
-      const now = audioCtx.currentTime;
+      // =========================
+      // CONECTAMOS
+      // =========================
 
-
-      // La gota aparece rápido
-      gain.gain.setValueAtTime(
-        0.0001,
-        now
-      );
-
-      gain.gain.exponentialRampToValueAtTime(
-        0.04,
-        now + 0.005
-      );
-
-
-      // Y desaparece rápido
-      gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        now + 0.12
-      );
-
-
-      // Conectamos:
-      // gota → volumen → posición → parlantes
-      oscillator.connect(gain);
+      drop.connect(filter);
+      filter.connect(gain);
       gain.connect(panner);
       panner.connect(audioCtx.destination);
 
-
-      oscillator.start(now);
-      oscillator.stop(now + 0.13);
+      drop.start();
 
 
       // =========================
-      // 3. PRÓXIMA GOTA
+      // PRÓXIMA GOTA
       // =========================
 
       const nextDrop =
-        80 + Math.random() * 350;
+        25 + Math.random() * 100;
 
-      dropTimer = setTimeout(
-        createDrop,
-        nextDrop
-      );
+      rainTimer =
+        setTimeout(createDrop, nextDrop);
     }
 
 
-    // Arrancamos las gotas
+    // Arranca la lluvia
     createDrop();
 
     soundBtn.textContent =
@@ -204,9 +178,7 @@ soundBtn.addEventListener("click", async () => {
 
     rainPlaying = false;
 
-    clearTimeout(dropTimer);
-
-    rainSource.stop();
+    clearTimeout(rainTimer);
 
     await audioCtx.close();
 
