@@ -39,42 +39,46 @@ themeToggle.addEventListener('click', () => {
 });
 const soundBtn = document.getElementById("soundBtn");
 
-soundBtn.addEventListener("click", () => {
+soundBtn.addEventListener("click", async () => {
+
+  const AudioContext =
+    window.AudioContext || window.webkitAudioContext;
 
   const audioCtx = new AudioContext();
 
-  const osc1 = audioCtx.createOscillator();
-  const osc2 = audioCtx.createOscillator();
+  // Aseguramos que Chrome active el audio
+  await audioCtx.resume();
+
+  const oscillator = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
-  osc1.type = "sine";
-  osc2.type = "sine";
-
-  osc1.frequency.value = 523.25;
-  osc2.frequency.value = 1046.5;
-
-  const now = audioCtx.currentTime;
-
-  gain.gain.setValueAtTime(0.0001, now);
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.08,
-    now + 0.01
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(
+    523.25,
+    audioCtx.currentTime
   );
 
-  gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    now + 2.5
+  // Empieza con volumen
+  gain.gain.setValueAtTime(
+    0.15,
+    audioCtx.currentTime
   );
 
-  osc1.connect(gain);
-  osc2.connect(gain);
+  // Se desvanece suavemente
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    audioCtx.currentTime + 2
+  );
+
+  oscillator.connect(gain);
   gain.connect(audioCtx.destination);
 
-  osc1.start(now);
-  osc2.start(now);
+  oscillator.start();
 
-  osc1.stop(now + 2.5);
-  osc2.stop(now + 2.5);
+  oscillator.stop(
+    audioCtx.currentTime + 2
+  );
+
+  console.log("TIN 🎵");
 
 });
