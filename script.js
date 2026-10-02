@@ -91,7 +91,7 @@ soundBtn.addEventListener("click", async () => {
     rainGain = audioCtx.createGain();
 
     // Bajamos bastante la estática
-    rainGain.gain.value = 0.035;
+    rainGain.gain.value = 0;
 
     rainSource.connect(rainFilter);
     rainFilter.connect(rainGain);
@@ -126,10 +126,10 @@ soundBtn.addEventListener("click", async () => {
         now
       );
 
-      gain.gain.exponentialRampToValueAtTime(
-        0.025,
-        now + 0.005
-      );
+     gain.gain.exponentialRampToValueAtTime(
+  0.08,
+  now + 0.005
+);
 
       // Y desaparece rápidamente
       gain.gain.exponentialRampToValueAtTime(
