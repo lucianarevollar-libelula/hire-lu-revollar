@@ -215,6 +215,3 @@ soundBtn.addEventListener("click", async () => {
   }
 
 });
-  }
-
-});
