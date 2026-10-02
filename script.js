@@ -48,7 +48,7 @@ soundBtn.addEventListener("click", () => {
   const oscillator = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
 
-  oscillator.type = "triangle";
+  oscillator.type = "square";
   oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
 
   gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
