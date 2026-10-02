@@ -40,22 +40,48 @@ themeToggle.addEventListener('click', () => {
 const soundBtn = document.getElementById("soundBtn");
 
 soundBtn.addEventListener("click", () => {
-  console.log("EL BOTÓN FUNCIONA 🎹");
 
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const AudioContext =
+    window.AudioContext || window.webkitAudioContext;
+
   const audioCtx = new AudioContext();
 
+  // Generador de la onda
   const oscillator = audioCtx.createOscillator();
+
+  // Control de amplitud
   const gain = audioCtx.createGain();
 
-  oscillator.type = "square";
-  oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+  oscillator.type = "sine";
 
-  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  // Do4 = 261.63 Hz
+  oscillator.frequency.value = 261.63;
+
+  // Empieza prácticamente en silencio
+  gain.gain.setValueAtTime(
+    0.0001,
+    audioCtx.currentTime
+  );
+
+  // FADE IN exponencial
+  gain.gain.exponentialRampToValueAtTime(
+    0.15,
+    audioCtx.currentTime + 0.8
+  );
+
+  // FADE OUT exponencial
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    audioCtx.currentTime + 3
+  );
 
   oscillator.connect(gain);
   gain.connect(audioCtx.destination);
 
   oscillator.start();
-  oscillator.stop(audioCtx.currentTime + 2);
+
+  oscillator.stop(
+    audioCtx.currentTime + 3
+  );
+
 });
